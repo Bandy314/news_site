@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -39,7 +40,19 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+
+        $image = $request->file('image');
+        $filename = time() .  $image->getClientOriginalName();
+        $image->move(Storage::path('/public/products/'), $filename);
+
+
+        $product = Product::create([
+            'title' => $request->input('title'),
+            'body' => $request->input('body'),
+            'image' => $filename
+        ]);
+
+        return back();
     }
 
     /**
